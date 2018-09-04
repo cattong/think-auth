@@ -1,7 +1,7 @@
 {
     "name": "cattong/think-auth",
     "description": "auth package for thinkphp5",
-    "homepage": "https://github.com/5ini99/think-auth",
+    "homepage": "https://github.com/cattong/think-auth",
     "license": "Apache-2.0",
     "minimum-stability": "stable",
     "version": "1.0.1",
@@ -12,7 +12,7 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/5ini99/think-auth/issues"
+        "issues": "https://github.com/cattong/think-auth/issues"
     },
     "require": {
         "php": ">=5.4.0"
