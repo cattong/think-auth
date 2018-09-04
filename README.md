@@ -1,5 +1,5 @@
 # think-addons
-The ThinkPHP5.1.x Auth Package
+The ThinkPHP 5.1.x Auth Package
 
 ## 安装
 > composer require cattong/think-auth
