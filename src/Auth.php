@@ -8,10 +8,10 @@
 // +----------------------------------------------------------------------
 // | Author: Byron Sampson <xiaobo.sun@gzzstudio.net>
 // +----------------------------------------------------------------------
-namespace think;
+namespace think\auth;
 
 use think\Db;
-use think\Config;
+use think\facade\Config;
 use think\Session;
 use think\Request;
 use think\Loader;
@@ -105,7 +105,7 @@ class Auth
             $this->config = array_merge($this->config, $auth);
         }
         // 初始化request
-        $this->request = Request::instance();
+        $this->request = request();
     }
 
     /**
@@ -191,8 +191,8 @@ class Auth
             return $groups[$uid];
         }
         // 转换表名
-        $auth_group_access = $this->config['auth_group_access'];
-        $auth_group = $this->config['auth_group'];
+        $auth_group_access = Loader::parseName($this->config['auth_group_access'], 0);
+        $auth_group = Loader::parseName($this->config['auth_group'], 0);
         // 执行查询
         $user_groups = Db::view($auth_group_access, 'uid,group_id')
             ->view($auth_group, 'title,rules', "{$auth_group_access}.group_id={$auth_group}.id", 'LEFT')
@@ -231,9 +231,9 @@ class Auth
             return [];
         }
         $map = array(
-            'id' => ['in', $ids],
-            'type' => $type,
-            'status' => 1,
+            ['id', 'in', $ids],
+            ['type', '=', $type],
+            ['status', '=', 1],
         );
         //读取用户组所有权限规则
         $rules = Db::name($this->config['auth_rule'])->where($map)->field('condition,name')->select();
@@ -261,33 +261,6 @@ class Auth
         }
 
         return array_unique($authList);
-    }
-
-    /**
-     * 获取权限组对应的权限列表
-     * @param $gid
-     * @param int $type
-     * @return array|mixed
-     */
-    public function getGroupAuthList($gid, $type = 1)
-    {
-        // 转换表名
-        $auth_group = $this->config['auth_group'];
-        $auth_rule = $this->config['auth_rule'];
-        // 执行查询
-        $rules = Db::name($auth_group)->where(['status'=>1, 'id'=>$gid])->value('rules');
-        // 格式化access表id
-        $ids = explode(',', trim($rules, ','));
-        $ids = array_unique($ids);
-        $map = array(
-            'id' => ['in', $ids],
-            'type' => $type,
-            'status' => 1,
-        );
-        //读取用户组所有权限规则
-        $rules = Db::name($auth_rule)->where($map)->column('title,name,condition');
-
-        return $rules;
     }
 
     /**
