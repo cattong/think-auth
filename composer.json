@@ -1,10 +1,9 @@
 {
     "name": "cattong/think-auth",
-    "description": "auth package for thinkphp5",
+    "description": "auth package for Thinkphp 5.1.x",
     "homepage": "https://github.com/cattong/think-auth",
     "license": "Apache-2.0",
     "minimum-stability": "stable",
-    "version": "1.0.2",
     "authors": [
         {
             "name": "miniappcms",
