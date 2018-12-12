@@ -88,9 +88,9 @@ class Auth
     protected $config = [
         'auth_on' => 1, // 权限开关
         'auth_type' => 1, // 认证方式，1为实时认证；2为登录认证。
-        'auth_group' => 'auth_group', // 用户组数据表名
-        'auth_group_access' => 'auth_group_access', // 用户-用户组关系表
-        'auth_rule' => 'auth_rule', // 权限规则表
+        'auth_group' => 'cms_auth_group', // 用户组数据表名
+        'auth_group_access' => 'cms_auth_group_access', // 用户-用户组关系表
+        'auth_rule' => 'cms_auth_rule', // 权限规则表
         'auth_user' => 'member', // 用户信息表
     ];
 
@@ -98,12 +98,18 @@ class Auth
      * 类架构函数
      * Auth constructor.
      */
-    public function __construct()
+    public function __construct($option=[])
     {
-        //可设置配置项 auth, 此配置项为数组。
-        if ($auth = Config::get('auth')) {
-            $this->config = array_merge($this->config, $auth);
+        if (empty($option)) {
+            //可设置配置项 auth, 此配置项为数组。
+            $authConfig = Config::get('auth.');
+            if ($authConfig) {
+                $this->config = array_merge($this->config, $authConfig);
+            }
+        } else {
+            $this->config = array_merge($this->config, $option);
         }
+
         // 初始化request
         $this->request = request();
     }
@@ -211,11 +217,15 @@ class Auth
      */
     protected function getAuthList($uid, $type)
     {
-        static $_authList = []; //保存用户验证通过的权限列表
+//        static $_authList = []; //保存用户验证通过的权限列表
+//        $t = implode(',', (array)$type);
+//        if (isset($_authList[$uid . $t])) {
+//            return $_authList[$uid . $t];
+//        }
+
+        $_authList = [];
         $t = implode(',', (array)$type);
-        if (isset($_authList[$uid . $t])) {
-            return $_authList[$uid . $t];
-        }
+
         if (2 == $this->config['auth_type'] && Session::has('_auth_list_' . $uid . $t)) {
             return Session::get('_auth_list_' . $uid . $t);
         }
