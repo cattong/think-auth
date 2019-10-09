@@ -11,22 +11,22 @@ The ThinkPHP 5.1.x Auth Package
 'auth'  => [
     'auth_on'           => 1, // 权限开关
     'auth_type'         => 1, // 认证方式，1为实时认证；2为登录认证。
-    'auth_group'        => 'auth_group', // 用户组数据不带前缀表名
-    'auth_group_access' => 'auth_group_access', // 用户-用户组关系不带前缀表名
-    'auth_rule'         => 'auth_rule', // 权限规则不带前缀表名
-    'auth_user'         => 'member', // 用户信息不带前缀表名
+    'auth_group'        => 'cms_auth_group', // 用户组数据不带前缀表名
+    'auth_group_access' => 'cms_auth_group_access', // 用户-用户组关系不带前缀表名
+    'auth_rule'         => 'cms_auth_rule', // 权限规则不带前缀表名
+    'auth_user'         => 'cms_member', // 用户信息不带前缀表名
 ],
 ```
 
 ### 导入数据表
-> `think_` 为自定义的数据表前缀
+> `cms_` 为自定义的数据表前缀
 
 ```
 ------------------------------
 -- think_auth_rule，规则表，
 -- id:主键，name：规则唯一标识, title：规则中文名称 status 状态：为1正常，为0禁用，condition：规则表达式，为空表示存在就验证，不为空表示按照条件验证
 ------------------------------
- DROP TABLE IF EXISTS `think_auth_rule`;
+ DROP TABLE IF EXISTS `cms_auth_rule`;
 CREATE TABLE `think_auth_rule` (  
     `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,  
     `name` char(80) NOT NULL DEFAULT '',  
@@ -35,40 +35,40 @@ CREATE TABLE `think_auth_rule` (
     `condition` char(100) NOT NULL DEFAULT '',  
     PRIMARY KEY (`id`),  
     UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 ------------------------------
 -- think_auth_group 用户组表， 
 -- id：主键， title:用户组中文名称， rules：用户组拥有的规则id， 多个规则","隔开，status 状态：为1正常，为0禁用
 ------------------------------
- DROP TABLE IF EXISTS `think_auth_group`;
+ DROP TABLE IF EXISTS `cms_auth_group`;
 CREATE TABLE `think_auth_group` ( 
     `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT, 
     `title` char(100) NOT NULL DEFAULT '', 
     `status` tinyint(1) NOT NULL DEFAULT '1', 
     `rules` char(80) NOT NULL DEFAULT '', 
     PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 ------------------------------
 -- think_auth_group_access 用户组明细表
 -- uid:用户id，group_id：用户组id
 ------------------------------
-DROP TABLE IF EXISTS `think_auth_group_access`;
+DROP TABLE IF EXISTS `cms_auth_group_access`;
 CREATE TABLE `think_auth_group_access` (  
     `uid` mediumint(8) unsigned NOT NULL,  
     `group_id` mediumint(8) unsigned NOT NULL, 
     UNIQUE KEY `uid_group_id` (`uid`,`group_id`),  
     KEY `uid` (`uid`), 
     KEY `group_id` (`group_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 ```
 
 ## 原理
 Auth权限认证是按规则进行认证。
 在数据库中我们有 
 
-- 规则表（think_auth_rule） 
-- 用户组表(think_auth_group) 
-- 用户组明显表（think_auth_group_access）
+- 规则表（cms_auth_rule） 
+- 用户组表(cms_auth_group) 
+- 用户组明显表（cms_auth_group_access）
 
 我们在规则表中定义权限规则， 在用户组表中定义每个用户组有哪些权限规则，在用户组明显表中定义用户所属的用户组。 
 
